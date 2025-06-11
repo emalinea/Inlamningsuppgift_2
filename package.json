@@ -17,5 +17,8 @@
     "url": "https://github.com/emalinea/Inl-mningsuppgift_2/issues"
   },
   "homepage": "https://github.com/emalinea/Inl-mningsuppgift_2#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "node": "^24.2.0"
+  }
 }
