@@ -18,14 +18,14 @@ async function getAllProducts() {
   return rows;
 }
 
-async function getproductsById(id) {
+async function getproductsById(id) { 
   const connection = await connectDB();
   const [rows] = await connection.query("SELECT * FROM products WHERE id = ?", [id]);
   await connection.end();
   return rows[0];  
 }
 
-async function addproducts({ name, description, price, quantity,category }) {
+async function addproducts({ name, description, price, quantity, category }) {
   const connection = await connectDB();
   const sql = "INSERT INTO products (Name, description, price, quantity, category) VALUES (?, ?, ?, ?, ?)";
   await connection.execute(sql, [name, description, price, quantity, category]);
@@ -34,7 +34,7 @@ async function addproducts({ name, description, price, quantity,category }) {
 
 async function deleteProducts(id) {
   const connection = await connectDB();
-  await connection.execute("DELETE FROM Products WHERE id = ?", [id]);
+  await connection.execute("DELETE FROM products WHERE id = ?", [id]); 
   await connection.end();
 }
 
@@ -42,13 +42,12 @@ async function updateProducts(id, { name, description, price, quantity, category
   const connection = await connectDB();
   const sql = `
     UPDATE products
-    SET Name = ?, Description = ?, price = ?, quality = ? , Ctegory = ?,
+    SET Name = ?, Description = ?, price = ?, quantity = ?, category = ?
     WHERE id = ?
   `;
   await connection.execute(sql, [name, description, price, quantity, category, id]);
   await connection.end();
 }
-
 
 module.exports = {
   getAllProducts,

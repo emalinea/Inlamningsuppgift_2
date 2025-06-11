@@ -4,7 +4,6 @@ const db = require("./database");
 
 const app = express();
 
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -18,11 +17,9 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-
 app.get("/api/create", (req, res) => {
   res.render("create");
 });
-
 
 app.post("/api/create", async (req, res) => {
   const { name, description, price, quantity, category } = req.body;
@@ -41,13 +38,12 @@ app.post("/api/create", async (req, res) => {
   }
 });
 
-
 app.get("/api/product", async (req, res) => {
   const id = req.query.id;
   if (!id) return res.status(400).send("ID saknas");
 
   try {
-    const product = await db.getProductsById(id);
+    const product = await db.getproductsById(id); 
     if (!product) return res.status(404).send("Produkten hittades inte.");
     res.json(product);
   } catch (err) {
@@ -56,13 +52,12 @@ app.get("/api/product", async (req, res) => {
   }
 });
 
-
 app.get("/api/edit", async (req, res) => {
   const id = req.query.id;
   if (!id) return res.status(400).send("ID saknas");
 
   try {
-    const product = await db.getProductById(id);
+    const product = await db.getproductsById(id); // rätt funktionsnamn
     if (!product) return res.status(404).send("Produkten hittades inte");
     res.json(product);
   } catch (err) {
@@ -70,7 +65,6 @@ app.get("/api/edit", async (req, res) => {
     res.status(500).send("Fel vid hämtning av produkt.");
   }
 });
-
 
 app.post("/api/edit", async (req, res) => {
   const { id, name, description, price, quantity, category } = req.body;
@@ -94,7 +88,6 @@ app.post("/api/edit", async (req, res) => {
   }
 });
 
-
 app.post("/api/products/:id/delete", async (req, res) => {
   try {
     await db.deleteProducts(req.params.id);
@@ -105,11 +98,10 @@ app.post("/api/products/:id/delete", async (req, res) => {
   }
 });
 
-
 if (require.main === module) {
   app.listen(5500, () => {
     console.log("Servern körs på http://localhost:5500");
   });
 }
 
-module.exports = { app };
+module.exports = app; 
