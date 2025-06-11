@@ -10,10 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
-app.get("/", async (req, res) => {
+app.get("api/Products", async (req, res) => {
   try {
-    const users = await db.getAllUsers();
-    res.render("index", { users });
+    const users = await db.getAllProducts();
+    response.status(200).json(data);
   } catch (err) {
     console.error("Fel vid hämtning av användare:", err.message);
     res.status(500).send("Fel vid hämtning av användare.");
@@ -21,20 +21,20 @@ app.get("/", async (req, res) => {
 });
 
 
-app.get("/create", (req, res) => {
+app.get("api/create", (req, res) => {
   res.render("create");
 });
 
 
-app.post("/create", async (req, res) => {
-  const { name, nickname, age, bio } = req.body;
-  console.log("Skapar användare med:", req.body);
-  if (!name || !nickname || !age || !bio) {
+app.post("api/create", async (req, res) => {
+  const {  name, descriptions, price, quantity , category } = req.body;
+  console.log("Skapar product med:", req.body);
+  if (!name || !description || !price || !quantity || !category) {
     return res.status(400).send("Alla fält måste fyllas i.");
   }
 
   try {
-    await db.addUser({ name, nickname, age: parseInt(age), bio });
+    await db.addproducts({ name, descriptions, price: parseInt(price), quantity , category });
     res.redirect("/");
   } catch (err) {
     console.error("Fel vid skapande:", err.message);
@@ -44,13 +44,13 @@ app.post("/create", async (req, res) => {
 
 
 
-app.get("/user", async (req, res) => {
+app.get("api/products", async (req, res) => {
   try {
-    const user = await db.getUserById(req.query.id);
+    const user = await db.getProductsById(req.query.id);
     if (!user) {
-      return res.status(404).send("Användare hittades inte.");
+      return res.status(404).send("Produkten hittades inte.");
     }
-    res.render("profile", { user });
+    response.json(data);
   } catch (err) {
     console.error("Fel vid hämtning av användare:", err.message);
     res.status(500).send("Kunde inte hämta användare.");
@@ -58,14 +58,14 @@ app.get("/user", async (req, res) => {
 });
 
 
-app.get("/edit", async (req, res) => {
+app.get("api/edit", async (req, res) => {
   const id = req.query.id;
   if (!id) return res.status(400).send("ID saknas");
 
   try {
-    const user = await db.getUserById(id);
-    if (!user) return res.status(404).send("Användare hittades inte");
-    res.render("edit", { user });
+    const product = await db.getProductById(id);
+    if (!product) return res.status(404).send("Produkten hittades inte");
+    response.json(data);
   } catch (err) {
     console.error("Fel vid hämtning för redigering:", err.message);
     res.status(500).send("Fel vid hämtning av användare.");
@@ -73,15 +73,15 @@ app.get("/edit", async (req, res) => {
 });
 
 
-app.post("/edit", async (req, res) => {
-  const { id, name, nickname, age, bio } = req.body;
+app.post("api/edit", async (req, res) => {
+  const { id, name, description, price, quantity, category } = req.body;
 
-  if (!id || !name || !nickname || !age || !bio) {
+  if (!id || !name || !description || !price || !quantity || !category) {
     return res.status(400).send("Alla fält måste fyllas i.");
   }
 
   try {
-    await db.updateUser(id, { name, nickname, age: parseInt(age), bio });
+    await db.updateProducts(id, { name, description, price: parseInt(price), quantity, category });
     res.redirect("/");
   } catch (err) {
     console.error("Fel vid uppdatering:", err.message);
@@ -90,13 +90,27 @@ app.post("/edit", async (req, res) => {
 });
 
 
-app.post("/users/:id/delete", async (req, res) => {
+app.post("api/products/:id/delete", async (req, res) => {
   try {
-    await db.deleteUser(req.params.id);
+    await db.deleteProducts(req.params.id);
     res.redirect("/");
   } catch (err) {
     console.error("Fel vid borttagning:", err.message);
-    res.status(500).send("Kunde inte ta bort användare.");
+    res.status(500).send("Kunde inte ta bort produkt.");
+  }
+});
+
+app.get("api/products/:id/delete", async (req, res) => {
+  const id = req.query.id;
+  if (!id) return res.status(400).send("ID saknas");
+
+  try {
+    const user = await db.deleteProductsById(id);
+    if (!user) return res.status(404).send("Produkten hittades inte");
+    response.status(200).json(data);
+  } catch (err) {
+    console.error("Fel vid hämtning för redigering:", err.message);
+    res.status(500).send("Fel vid hämtning av användare.");
   }
 });
 
