@@ -5,75 +5,74 @@ const db = require("./database");
 const app = express();
 
 
-
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-
-
-app.get("api/Products", async (req, res) => {
+app.get("/api/products", async (req, res) => {
   try {
-    const users = await db.getAllProducts();
-    response.status(200).json(data);
+    const products = await db.getAllProducts();
+    res.status(200).json(products);
   } catch (err) {
-    console.error("Fel vid hämtning av användare:", err.message);
-    res.status(500).send("Fel vid hämtning av användare.");
+    console.error("Fel vid hämtning av produkter:", err.message);
+    res.status(500).send("Fel vid hämtning av produkter.");
   }
 });
 
 
-app.get("api/create", (req, res) => {
+app.get("/api/create", (req, res) => {
   res.render("create");
 });
 
 
-app.post("api/create", async (req, res) => {
-  const {  name, descriptions, price, quantity , category } = req.body;
-  console.log("Skapar product med:", req.body);
+app.post("/api/create", async (req, res) => {
+  const { name, description, price, quantity, category } = req.body;
+  console.log("Skapar produkt med:", req.body);
+
   if (!name || !description || !price || !quantity || !category) {
     return res.status(400).send("Alla fält måste fyllas i.");
   }
 
   try {
-    await db.addproducts({ name, descriptions, price: parseInt(price), quantity , category });
+    await db.addproducts({ name, description, price: parseInt(price), quantity, category });
     res.redirect("/");
   } catch (err) {
     console.error("Fel vid skapande:", err.message);
-    res.status(500).send("Något gick fel vid skapande av användare.");
+    res.status(500).send("Något gick fel vid skapande av produkt.");
   }
 });
 
 
+app.get("/api/product", async (req, res) => {
+  const id = req.query.id;
+  if (!id) return res.status(400).send("ID saknas");
 
-app.get("api/products", async (req, res) => {
   try {
-    const user = await db.getProductsById(req.query.id);
-    if (!user) {
-      return res.status(404).send("Produkten hittades inte.");
-    }
-    response.json(data);
+    const product = await db.getProductsById(id);
+    if (!product) return res.status(404).send("Produkten hittades inte.");
+    res.json(product);
   } catch (err) {
-    console.error("Fel vid hämtning av användare:", err.message);
-    res.status(500).send("Kunde inte hämta användare.");
+    console.error("Fel vid hämtning av produkt:", err.message);
+    res.status(500).send("Kunde inte hämta produkt.");
   }
 });
 
 
-app.get("api/edit", async (req, res) => {
+app.get("/api/edit", async (req, res) => {
   const id = req.query.id;
   if (!id) return res.status(400).send("ID saknas");
 
   try {
     const product = await db.getProductById(id);
     if (!product) return res.status(404).send("Produkten hittades inte");
-    response.json(data);
+    res.json(product);
   } catch (err) {
     console.error("Fel vid hämtning för redigering:", err.message);
-    res.status(500).send("Fel vid hämtning av användare.");
+    res.status(500).send("Fel vid hämtning av produkt.");
   }
 });
 
 
-app.post("api/edit", async (req, res) => {
+app.post("/api/edit", async (req, res) => {
   const { id, name, description, price, quantity, category } = req.body;
 
   if (!id || !name || !description || !price || !quantity || !category) {
@@ -81,7 +80,13 @@ app.post("api/edit", async (req, res) => {
   }
 
   try {
-    await db.updateProducts(id, { name, description, price: parseInt(price), quantity, category });
+    await db.updateProducts(id, {
+      name,
+      description,
+      price: parseInt(price),
+      quantity,
+      category,
+    });
     res.redirect("/");
   } catch (err) {
     console.error("Fel vid uppdatering:", err.message);
@@ -90,7 +95,7 @@ app.post("api/edit", async (req, res) => {
 });
 
 
-app.post("api/products/:id/delete", async (req, res) => {
+app.post("/api/products/:id/delete", async (req, res) => {
   try {
     await db.deleteProducts(req.params.id);
     res.redirect("/");
@@ -100,19 +105,6 @@ app.post("api/products/:id/delete", async (req, res) => {
   }
 });
 
-app.get("api/products/:id/delete", async (req, res) => {
-  const id = req.query.id;
-  if (!id) return res.status(400).send("ID saknas");
-
-  try {
-    const user = await db.deleteProductsById(id);
-    if (!user) return res.status(404).send("Produkten hittades inte");
-    response.status(200).json(data);
-  } catch (err) {
-    console.error("Fel vid hämtning för redigering:", err.message);
-    res.status(500).send("Fel vid hämtning av användare.");
-  }
-});
 
 if (require.main === module) {
   app.listen(5500, () => {
@@ -120,5 +112,4 @@ if (require.main === module) {
   });
 }
 
-const server = app.listen();
 module.exports = { app };
