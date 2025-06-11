@@ -1,10 +1,11 @@
 {
   "name": "inl-mningsuppgift_2",
   "version": "1.0.0",
+  "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -17,8 +18,11 @@
     "url": "https://github.com/emalinea/Inl-mningsuppgift_2/issues"
   },
   "homepage": "https://github.com/emalinea/Inl-mningsuppgift_2#readme",
-  "description": "",
   "dependencies": {
     "node": "^24.2.0"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0",
+    "supertest": "^7.1.1"
   }
 }
