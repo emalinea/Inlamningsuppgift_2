@@ -9,7 +9,15 @@ app.use(express.json());
 
 app.get("/api/products", async (req, res) => {
   try {
-    const products = await db.getAllProducts();
+    const name = req.query.name;
+    let products;
+
+    if (name) {
+      products = await db.searchProductsByName(name); 
+    } else {
+      products = await db.getAllProducts(); 
+    }
+
     res.status(200).json(products);
   } catch (err) {
     console.error("Fel vid hämtning av produkter:", err.message);

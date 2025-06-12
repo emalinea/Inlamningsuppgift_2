@@ -49,10 +49,21 @@ async function updateProducts(id, { name, description, price, quantity, category
   await connection.end();
 }
 
+async function searchProductsByName(keyword) {
+  const connection = await connectDB();
+  const [rows] = await connection.query(
+    "SELECT * FROM products WHERE name LIKE ?",
+    [`%${keyword}%`]
+  );
+  await connection.end();
+  return rows;
+}
+
 module.exports = {
   getAllProducts,
   getproductsById,
   addproducts,
   deleteProducts,
   updateProducts,
+  searchProductsByName,
 };
