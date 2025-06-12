@@ -37,7 +37,11 @@ async function deleteProducts(id) {
   await connection.execute("DELETE FROM products WHERE id = ?", [id]); 
   await connection.end();
 }
-
+async function deleteAllProducts() {
+  const connection = await connectDB();
+  await connection.execute("DELETE FROM products");  
+  await connection.end();
+}
 async function updateProducts(id, { name, description, price, quantity, category }) {
   const connection = await connectDB();
   const sql = `
@@ -59,6 +63,8 @@ async function searchProductsByName(keyword) {
   return rows;
 }
 
+
+
 module.exports = {
   getAllProducts,
   getproductsById,
@@ -66,4 +72,5 @@ module.exports = {
   deleteProducts,
   updateProducts,
   searchProductsByName,
+  deleteAllProducts
 };
