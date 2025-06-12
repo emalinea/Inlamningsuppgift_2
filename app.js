@@ -7,7 +7,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// GET all products or search by name
+
 app.get("/api/products", async (req, res) => {
   try {
     const name = req.query.name;
@@ -26,7 +26,7 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-// POST create a new product
+
 app.post("/api/products", async (req, res) => {
   const { name, description, price, quantity, category } = req.body;
   console.log("Skapar produkt med:", req.body);
@@ -50,7 +50,7 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
-// GET product by id
+
 app.get("/api/products/:id", async (req, res) => {
   const id = req.params.id;
   if (!id) return res.status(400).send("ID saknas");
@@ -65,7 +65,7 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-// PUT update product by id
+
 app.put("/api/products/:id", async (req, res) => {
   const id = req.params.id;
   const { name, description, price, quantity, category } = req.body;
@@ -99,10 +99,10 @@ app.post("/api/products/:id/delete", async (req, res) => {
   }
 });
 
-// Radera ALLA produkter
+
 app.delete("/api/products/delete", async (req, res) => {
   try {
-    await db.deleteAllProducts(); // se till att denna metod finns
+    await db.deleteAllProducts(); 
     res.status(200).json({ message: "Alla produkter togs bort." });
   } catch (err) {
     console.error("Fel vid borttagning:", err.message);
