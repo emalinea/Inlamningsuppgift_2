@@ -9,7 +9,15 @@ app.use(express.json());
 
 app.get("/api/products", async (req, res) => {
   try {
-    const products = await db.getAllProducts();
+    const name = req.query.name;
+    let products;
+
+    if (name) {
+      products = await db.searchProductsByName(name); 
+    } else {
+      products = await db.getAllProducts(); 
+    }
+
     res.status(200).json(products);
   } catch (err) {
     console.error("Fel vid hämtning av produkter:", err.message);
@@ -38,26 +46,12 @@ app.post("/api/create", async (req, res) => {
   }
 });
 
-app.get("/api/product", async (req, res) => {
-  const id = req.query.id;
+app.get("/api/products/:id", async (req, res) => {
+  const id = req.params.id;
   if (!id) return res.status(400).send("ID saknas");
 
   try {
-    const product = await db.getproductsById(id); 
-    if (!product) return res.status(404).send("Produkten hittades inte.");
-    res.json(product);
-  } catch (err) {
-    console.error("Fel vid hämtning av produkt:", err.message);
-    res.status(500).send("Kunde inte hämta produkt.");
-  }
-});
-
-app.get("/api/edit", async (req, res) => {
-  const id = req.query.id;
-  if (!id) return res.status(400).send("ID saknas");
-
-  try {
-    const product = await db.getproductsById(id); // rätt funktionsnamn
+    const product = await db.getproductsById(id);
     if (!product) return res.status(404).send("Produkten hittades inte");
     res.json(product);
   } catch (err) {
