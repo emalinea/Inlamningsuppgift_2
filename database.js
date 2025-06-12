@@ -32,16 +32,20 @@ async function addproducts({ name, description, price, quantity, category }) {
   await connection.end();
 }
 
+
 async function deleteProducts(id) {
   const connection = await connectDB();
   await connection.execute("DELETE FROM products WHERE id = ?", [id]); 
   await connection.end();
 }
+
+
 async function deleteAllProducts() {
   const connection = await connectDB();
   await connection.execute("DELETE FROM products");  
   await connection.end();
 }
+
 async function updateProducts(id, { name, description, price, quantity, category }) {
   const connection = await connectDB();
   const sql = `

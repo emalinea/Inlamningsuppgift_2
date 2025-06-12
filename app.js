@@ -13,9 +13,9 @@ app.get("/api/products", async (req, res) => {
     let products;
 
     if (name) {
-      products = await db.searchProductsByName(name); 
+      products = await db.searchProductsByName(name);
     } else {
-      products = await db.getAllProducts(); 
+      products = await db.getAllProducts();
     }
 
     res.status(200).json(products);
@@ -25,26 +25,30 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-app.get("/api/create", (req, res) => {
-  res.render("create");
-});
 
-app.post("/api/create", async (req, res) => {
+app.post("/api/products", async (req, res) => {
   const { name, description, price, quantity, category } = req.body;
   console.log("Skapar produkt med:", req.body);
 
   if (!name || !description || !price || !quantity || !category) {
-    return res.status(400).send("Alla fält måste fyllas i.");
+    return res.status(400).json({ error: "Alla fält måste fyllas i." });
   }
 
   try {
-    await db.addproducts({ name, description, price: parseInt(price), quantity, category });
-    res.redirect("/");
+    await db.addproducts({
+      name,
+      description,
+      price: parseInt(price),
+      quantity,
+      category,
+    });
+    res.status(201).json({ message: "Produkt skapad" });
   } catch (err) {
     console.error("Fel vid skapande:", err.message);
-    res.status(500).send("Något gick fel vid skapande av produkt.");
+    res.status(500).json({ error: "Något gick fel vid skapande av produkt." });
   }
 });
+
 
 app.get("/api/products/:id", async (req, res) => {
   const id = req.params.id;
@@ -60,11 +64,13 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-app.post("/api/edit", async (req, res) => {
-  const { id, name, description, price, quantity, category } = req.body;
 
-  if (!id || !name || !description || !price || !quantity || !category) {
-    return res.status(400).send("Alla fält måste fyllas i.");
+app.put("/api/products/:id", async (req, res) => {
+  const id = req.params.id;
+  const { name, description, price, quantity, category } = req.body;
+
+  if (!name || !description || !price || !quantity || !category) {
+    return res.status(400).json({ error: "Alla fält måste fyllas i." });
   }
 
   try {
@@ -75,23 +81,20 @@ app.post("/api/edit", async (req, res) => {
       quantity,
       category,
     });
-    res.redirect("/");
+    res.json({ message: "Produkt uppdaterad" });
   } catch (err) {
     console.error("Fel vid uppdatering:", err.message);
-    res.status(500).send("Något gick fel vid uppdatering.");
+    res.status(500).json({ error: "Något gick fel vid uppdatering." });
   }
 });
 
-
 app.delete("/api/products/:id", async (req, res) => {
   try {
-    const productId = req.params.id;
-    const result = await db.deleteProducts(productId);  
-    
-    res.json({ message: "Produkt borttagen." });
-  } catch (error) {
-    console.error("Fel vid borttagning:", error);
-    res.status(500).json({ message: "Kunde inte ta bort produkt." });
+    await db.deleteProducts(req.params.id);
+    res.status(200).json({ message: "Produkten togs bort." });
+  } catch (err) {
+    console.error("Fel vid borttagning:", err.message);
+    res.status(500).json({ error: "Kunde inte ta bort produkt." });
   }
 });
 
