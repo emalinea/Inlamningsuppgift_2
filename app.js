@@ -89,16 +89,27 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-// DELETE product by id
-app.delete("/api/products/:id", async (req, res) => {
+app.post("/api/products/:id/delete", async (req, res) => {
   try {
     await db.deleteProducts(req.params.id);
-    res.json({ message: "Produkt borttagen" });
+    res.redirect("/");
   } catch (err) {
     console.error("Fel vid borttagning:", err.message);
     res.status(500).json({ error: "Kunde inte ta bort produkt." });
   }
 });
+
+// Radera ALLA produkter
+app.delete("/api/products/delete", async (req, res) => {
+  try {
+    await db.deleteAllProducts(); // se till att denna metod finns
+    res.status(200).json({ message: "Alla produkter togs bort." });
+  } catch (err) {
+    console.error("Fel vid borttagning:", err.message);
+    res.status(500).send("Kunde inte ta bort produkter.");
+  }
+});
+
 
 if (require.main === module) {
   app.listen(5500, () => {
