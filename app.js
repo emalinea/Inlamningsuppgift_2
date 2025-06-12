@@ -88,15 +88,28 @@ app.post("/api/edit", async (req, res) => {
   }
 });
 
-app.post("/api/products/:id/delete", async (req, res) => {
+// Radera EN produkt med ID
+app.delete("/api/products/:id/delete", async (req, res) => {
   try {
-    await db.deleteProducts(req.params.id);
-    res.redirect("/");
+    await db.deleteProductById(req.params.id); // se till att denna metod finns
+    res.status(200).json({ message: "Produkten togs bort." });
   } catch (err) {
     console.error("Fel vid borttagning:", err.message);
     res.status(500).send("Kunde inte ta bort produkt.");
   }
 });
+
+// Radera ALLA produkter
+app.delete("/api/products/delete", async (req, res) => {
+  try {
+    await db.deleteAllProducts(); // se till att denna metod finns
+    res.status(200).json({ message: "Alla produkter togs bort." });
+  } catch (err) {
+    console.error("Fel vid borttagning:", err.message);
+    res.status(500).send("Kunde inte ta bort produkter.");
+  }
+});
+
 
 if (require.main === module) {
   app.listen(5500, () => {
@@ -104,4 +117,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = app; 
+module.exports = app;
