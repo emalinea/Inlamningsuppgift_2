@@ -1,0 +1,136 @@
+
+
+Det här projektet är en REST API-server byggd i Node.js och Express med en MySQL-databas.  
+API:et hanterar produkter och stöder följande operationer:
+
+- GET /api/products * Hämta alla produkter
+- GET /api/products/:id *Hämta en produkt
+- POST /api/products* Skapa ny produkt
+-PUT /api/products/:id *Uppdatera produkt
+- DELETE /api/products/:id *Ta bort en produkt
+- DELETE /api/products *Ta bort alla produkter
+
+
+
+inlämningsuppgift-2/
+│
+├── server.js
+├── database.js
+├── package.json
+├── package-lock.json
+│
+├── __tests__/
+│   ├── unit/
+│   │   └── unit.test.js
+│   ├── integration/
+│   │   └── integration.test.js
+│   └── e2e/
+│       └── postman_collection.json
+│
+├── routes/
+│   └── products.js
+
+
+
+Installation
+
+1. Klona projektet / packa upp ZIP-filen
+2. Gå till mappen:
+
+bash
+cd inlämningsuppgift-2
+
+
+3. Installera beroenden:
+
+bash
+npm install
+
+
+
+ Skapa databas
+
+1. Öppna MySQL Workbench
+2. Kör följande SQL:
+
+sql
+CREATE DATABASE products_db;
+
+USE products_db;
+
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    description TEXT,
+    price DECIMAL(10,2),
+    quantity INT,
+    category VARCHAR(255)
+);
+
+
+3. Uppdatera connectDB() i database.js med dina databasuppgifter:
+
+js
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'root',
+  database: 'products_db'
+});
+
+
+
+
+Starta servern
+
+bash
+node server.js
+
+
+Servern körs på:  
+
+http://localhost:5500
+
+
+Tester
+
+Postman
+1. Importera __tests__/e2e/postman_collection.json i Postman
+2. Kör hela testsviten
+3. Alla endpoints testas med både korrekt och felaktig data
+
+Automatiserade tester (Jest + Supertest)
+
+bash
+npm test
+
+
+Detta kör enhetstester och integrationstester under __tests__/
+
+---
+
+ Testfallshantering
+
+- 7 testfall har skapats i Tricentis , 1-2 per route.
+- Testerna har även exekverats manuellt i Postman
+- Alla testresultat dokumenterade och matchar förväntade utfall
+
+---
+
+ Redovisning
+
+Redovisningen görs på plats i skolan:
+- Applikationens funktionalitet
+- Hur testerna fungerar
+- Testsvit i Postman och Jest
+- SQL-databasens struktur
+
+---
+
+ Inlämning
+
+Zip-filen innehåller:
+- All källkod (utan node_modules)
+- README.md
+- Postman collection
+- Testfiler
