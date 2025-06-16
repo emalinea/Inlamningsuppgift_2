@@ -7,6 +7,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// GET all products or search by name
 app.get("/api/products", async (req, res) => {
   try {
     const name = req.query.name;
@@ -25,7 +26,7 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-
+// POST create a new product
 app.post("/api/products", async (req, res) => {
   const { name, description, price, quantity, category } = req.body;
   console.log("Skapar produkt med:", req.body);
@@ -49,7 +50,7 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
-
+// GET product by id
 app.get("/api/products/:id", async (req, res) => {
   const id = req.params.id;
   if (!id) return res.status(400).send("ID saknas");
@@ -64,7 +65,7 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-
+// PUT update product by id
 app.put("/api/products/:id", async (req, res) => {
   const id = req.params.id;
   const { name, description, price, quantity, category } = req.body;
@@ -81,13 +82,21 @@ app.put("/api/products/:id", async (req, res) => {
       quantity,
       category,
     });
-    res.json({ message: "Produkt uppdaterad" });
+
+    // Hämta och returnera den uppdaterade produkten
+    const updatedProduct = await db.getproductsById(id);
+    if (!updatedProduct) {
+      return res.status(404).json({ error: "Produkten hittades inte efter uppdatering." });
+    }
+
+    res.status(200).json(updatedProduct);
   } catch (err) {
     console.error("Fel vid uppdatering:", err.message);
     res.status(500).json({ error: "Något gick fel vid uppdatering." });
   }
 });
 
+// DELETE product by id
 app.delete("/api/products/:id", async (req, res) => {
   try {
     await db.deleteProducts(req.params.id);
@@ -98,8 +107,7 @@ app.delete("/api/products/:id", async (req, res) => {
   }
 });
 
-
-
+// DELETE all products
 app.delete("/api/products", async (req, res) => {
   try {
     await db.deleteAllProducts();
@@ -110,8 +118,6 @@ app.delete("/api/products", async (req, res) => {
   }
 });
 
-
-
 if (require.main === module) {
   app.listen(5500, () => {
     console.log("Servern körs på http://localhost:5500");
@@ -119,3 +125,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+

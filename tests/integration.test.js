@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
 
-
 describe('GET /api/products', () => {
   it('should respond with status 200 and return an array', async () => {
     const res = await request(app).get('/api/products');
@@ -10,10 +9,9 @@ describe('GET /api/products', () => {
   });
 });
 
-
-describe('GET /api/product', () => {
+describe('GET /api/products/:id', () => {
   it('should return 200 or 404 depending on if product exists', async () => {
-    const res = await request(app).get('/api/product?id=1');
+    const res = await request(app).get('/api/products/1');
     expect([200, 404]).toContain(res.statusCode);
     if (res.statusCode === 200) {
       expect(res.body).toHaveProperty('id');
@@ -21,43 +19,41 @@ describe('GET /api/product', () => {
   });
 });
 
-
-describe('POST /api/create', () => {
-  it('should create a new product and redirect', async () => {
+describe('POST /api/products', () => {
+  it('should create a new product and return 201', async () => {
     const res = await request(app)
-      .post('/api/create')
+      .post('/api/products')
       .send({
         name: 'Testprodukt',
         description: 'En testbeskrivning',
         price: 99,
         quantity: 5,
-        category: 'Testkategori'
+        category: 'Testkategori',
       });
 
-    expect([200, 302]).toContain(res.statusCode);
+    expect(res.statusCode).toBe(201); 
+    expect(res.body).toHaveProperty('message', 'Produkt skapad');
   });
-
 
   it('should return 400 when required field is missing', async () => {
     const res = await request(app)
-      .post('/api/create')
+      .post('/api/products')
       .send({
         name: 'Testprodukt',
         
         price: 99,
         quantity: 5,
-        category: 'Testkategori'
+        category: 'Testkategori',
       });
 
     expect(res.statusCode).toBe(400);
-    expect(res.text).toContain('Alla fält måste fyllas i');
+    expect(res.body).toHaveProperty('error', 'Alla fält måste fyllas i.');
   });
 });
 
-
-describe('POST /api/products/:id/delete', () => {
-  it('should delete a product and redirect or return 404 if not found', async () => {
-    const res = await request(app).post('/api/products/1/delete');
-    expect([200, 302, 404]).toContain(res.statusCode);
+describe('DELETE /api/products/:id', () => {
+  it('should delete a product and return 200 or 404', async () => {
+    const res = await request(app).delete('/api/products/1');
+    expect([200, 404]).toContain(res.statusCode);
   });
 });
