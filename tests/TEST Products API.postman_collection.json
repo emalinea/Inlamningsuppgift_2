@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "20baf775-632b-4cde-9875-1bbbc52c1bfa",
+		"name": "TEST Products API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "44329080",
+		"_collection_link": "https://emma-3093317.postman.co/workspace/Emma's-Workspace~f3cbeb84-c5c5-4141-867d-17f76b05aa80/collection/44329080-20baf775-632b-4cde-9875-1bbbc52c1bfa?action=share&source=collection_link&creator=44329080"
+	},
+	"item": [
+		{
+			"name": "api/products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.jsonBody();\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5500/api/products"
+			},
+			"response": []
+		},
+		{
+			"name": "api/products/:id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"it should return existing product\", function () {\r",
+							"    const product = pm.response.json();\r",
+							"    pm.expect(product.id).to.eql(3);\r",
+							"    pm.expect(product.Price).to.eql(11);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5500/api/products/3"
+			},
+			"response": []
+		},
+		{
+			"name": "api/products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Svar innehåller meddelande om skapad produkt\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\");\r",
+							"    pm.expect(jsonData.message).to.equal(\"Produkt skapad\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"name\": \"Fluffy Soap\",\r\n\"description\": \"Soft and smooth soap\",\r\n\"price\": 29,\r\n\"quantity\": 22,\r\n\"category\": \"Health\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5500/api/products"
+			},
+			"response": []
+		},
+		{
+			"name": "api/products/:id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Produkten uppdaterades\", () => {\r",
+							"    pm.expect(jsonData).to.have.property(\"Name\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Monday Soap\",\r\n  \"description\": \"Fresh soap\",\r\n  \"price\": 19,\r\n  \"quantity\": 10,\r\n  \"category\": \"Skin and makeup\"\r\n}\r\n\r\n\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5500/api/products/3"
+			},
+			"response": []
+		},
+		{
+			"name": "api/products?name=kw",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Minst en produkt innehåller 'kw'\", () => {\r",
+							"    pm.expect(\r",
+							"        pm.response.json().some(p => (p.Name || \"\").toLowerCase().includes(\"kw\"))\r",
+							"    ).to.be.true;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5500/api/products?name=kw",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "kw"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/products/:id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Svar ska innehålla bekräftelse\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"message\", \"Produkten togs bort.\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5500/api/products/3"
+			},
+			"response": []
+		},
+		{
+			"name": "api/products",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5500/api/products"
+			},
+			"response": []
+		}
+	]
+}
